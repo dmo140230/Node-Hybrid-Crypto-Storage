@@ -1,0 +1,13 @@
+.vscode
+.vscode/*
+*.png
+stored/
+stored/*
+restored/
+restored/*
+node_modules
+node_modules/*
+logs
+logs/*
+*.log
+package-lock.json
