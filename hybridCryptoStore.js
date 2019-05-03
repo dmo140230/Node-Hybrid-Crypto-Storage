@@ -6,13 +6,14 @@ const path          = require("path");
 const encryptor     = require('file-encryptor');
 const stego         = require("stegosaurus");
 
-var _hybridCryto = function(){
+var _hybridCrypto = function(){
     var that = this;
     //helper method
     var deleteFiles = function(files, callback){
         if (!files || files.length==0) return callback();
         else {
            var f = files.pop();
+           f.replace(/\//g, '\\').replace(/\\\\/g, '\\');
            fs.unlink(f, function(err){
               if (err) callback(err);
               else {
@@ -86,7 +87,7 @@ var _hybridCryto = function(){
         var createImage = function(callback){
             var original_png = "key.png";		// The original png file.
             delete_files = data.parts.slice(0);
-            delete_files.push(data.orig);
+            delete_files.push(__dirname + '/' + data.orig);
             delete data.parts;
             delete data.parts_copy;
             data.size = JSON.stringify(data).length - 1;
@@ -209,7 +210,7 @@ var _hybridCryto = function(){
 /* var file = 'SSR_TSRPT.pdf';
 var restore_file = 'key_1017_6115543638_1556517416530.png';
 
-var hybridCryptoObject = new _hybridCryto;
+var hybridCryptoObject = new _hybridCrypto;
 //hybridCryptoObject.store(file, 4, encryptedResponse);
 hybridCryptoObject.restore(restore_file, downloadResponse)
 
@@ -219,4 +220,4 @@ function encryptedResponse(err, data){
 function downloadResponse(err, data){
     console.log(data);
 } */
-module.exports = new _hybridCryto;
+module.exports = new _hybridCrypto;

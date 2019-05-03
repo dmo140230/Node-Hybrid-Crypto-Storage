@@ -3,11 +3,46 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var upload = require('jquery-file-upload-middleware');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var hybridCrypto = require('./hybridCryptoStore');
+var uploadDir = '/public/uploads/'
 var app = express();
+
+// configure upload middleware
+upload.configure({
+  uploadDir: __dirname + uploadDir,
+  uploadUrl: '/upload'
+});
+upload.on('end', function (fileInfo, req, res) {
+  console.log(fileInfo);
+  hybridCrypto.store(uploadDir + fileInfo.name)
+});
+
+/// Redirect all to home except post
+app.get('/upload', function( req, res ){
+  res.redirect('/');
+});
+
+app.put('/upload', function( req, res ){
+  res.redirect('/');
+});
+
+app.delete('/upload', function( req, res ){
+  res.redirect('/');
+});
+
+app.use('/upload', function(req, res, next){
+  upload.fileHandler({
+      uploadDir: function () {
+          return __dirname + '/public/uploads/'
+      },
+      uploadUrl: function () {
+          return '/uploads'
+      }
+  })(req, res, next);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,9 +53,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/upload', upload.fileHandler());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

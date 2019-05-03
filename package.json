@@ -14,7 +14,9 @@
     "file-encryptor": "^0.1.1",
     "hbs": "~4.0.1",
     "http-errors": "~1.6.2",
+    "jquery-file-upload-middleware": "^0.1.8",
     "morgan": "~1.9.0",
+    "save": "^2.3.3",
     "split-file": "^2.1.1",
     "stegosaurus": "^0.1.2"
   }

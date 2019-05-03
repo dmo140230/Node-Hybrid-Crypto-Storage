@@ -3,6 +3,7 @@
 *.png
 stored/
 stored/*
+public/uploads/*
 restored/
 restored/*
 node_modules
