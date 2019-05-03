@@ -1,6 +1,5 @@
 .vscode
 .vscode/*
-*.png
 stored/
 stored/*
 public/uploads/*

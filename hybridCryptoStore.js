@@ -111,8 +111,9 @@ var _hybridCrypto = function(){
             });
             //delete original file
             //return steganography image
-            if(typeof _encryptCallback == 'function')
-                _encryptCallback(err, data);
+            //if(typeof _encryptCallback == 'function')
+            console.log("Running encrypt callback");
+            _encryptCallback(err, data);
         }
     
         init();
@@ -141,6 +142,7 @@ var _hybridCrypto = function(){
         var readImage = function(callback){
             var bits = _file.split('_')[1];
             console.log(bits);
+            delete_files.push(__dirname + '/' + _file);
             stego.decode(__dirname + '/' + _file, bits, function(payload){
                 try {
                     var payload = JSON.parse(payload);
@@ -181,9 +183,6 @@ var _hybridCrypto = function(){
             splitFile.mergeFiles(data.parts, __dirname + '/' + data.result)
                 .then(() => {
                     return callback();
-                })
-                .catch((err) => {
-                    return callback(err);
                 });
         }
 
@@ -192,13 +191,12 @@ var _hybridCrypto = function(){
                 console.log(err);
             else
                 console.log('Finished hybrid cryptography restore - returning file');
+            //return steganography image
+            console.log("Running download callback");
+            _downloadCallback(err, data);
             deleteFiles(delete_files, function(){
                 console.log("Deleted all parts!");
             });
-            //delete original file
-            //return steganography image
-            if(typeof _downloadCallback == 'function')
-                _downloadCallback(err, data);
         }
 
         init();

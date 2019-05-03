@@ -12,36 +12,46 @@ var app = express();
 
 // configure upload middleware
 upload.configure({
-  uploadDir: __dirname + uploadDir,
-  uploadUrl: '/upload'
+	uploadDir: __dirname + uploadDir,
+	uploadUrl: '/upload'
 });
 upload.on('end', function (fileInfo, req, res) {
-  console.log(fileInfo);
-  hybridCrypto.store(uploadDir + fileInfo.name)
+	if(req.query.type == 'encrypt'){
+		hybridCrypto.store(uploadDir + fileInfo.name, 3, function(err, data){
+			console.log(data);
+			//return res.download(__dirname + '/' + data.image);
+		})
+	}
+	else if(req.query.type == 'decrypt'){
+		hybridCrypto.restore(uploadDir + fileInfo.name, function(err, data){
+			console.log('received data ' , data);
+			//return res.download(__dirname + '/' + data.result);
+		});
+	}
 });
 
 /// Redirect all to home except post
 app.get('/upload', function( req, res ){
-  res.redirect('/');
+	res.redirect('/');
 });
 
 app.put('/upload', function( req, res ){
-  res.redirect('/');
+	res.redirect('/');
 });
 
 app.delete('/upload', function( req, res ){
-  res.redirect('/');
+	res.redirect('/');
 });
 
 app.use('/upload', function(req, res, next){
-  upload.fileHandler({
-      uploadDir: function () {
-          return __dirname + '/public/uploads/'
-      },
-      uploadUrl: function () {
-          return '/uploads'
-      }
-  })(req, res, next);
+	upload.fileHandler({
+		uploadDir: function () {
+			return __dirname + '/public/uploads/'
+		},
+		uploadUrl: function () {
+			return '/uploads'
+		}
+	})(req, res, next);
 });
 
 // view engine setup
@@ -55,22 +65,21 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/upload', upload.fileHandler());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+	next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+	// render the error page
+	res.status(err.status || 500);
+	res.render('error');
 });
 
 module.exports = app;
