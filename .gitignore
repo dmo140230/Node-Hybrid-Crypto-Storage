@@ -1,5 +1,7 @@
 .vscode
 .vscode/*
+*.png
+*.jpg
 stored/
 stored/*
 public/uploads/*
