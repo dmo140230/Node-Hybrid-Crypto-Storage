@@ -29,11 +29,11 @@ var _hybridCrypto = function(){
         var counter = 0;
         var delete_files = false;
         var data = {
+            size: false,
             orig: false,
             encrypted_files: [],
             parts: false,
             parts_copy: false,
-            size: false,
             image: false,
         }
     
@@ -140,20 +140,46 @@ var _hybridCrypto = function(){
         }
 
         var readImage = function(callback){
-            var bits = _file.split('_')[1];
+            var bits;
+            var renamed = false;
+            try {
+                bits = _file.split('_')[1];
+            } catch (error) {
+                renamed = true;
+                bits = 20;
+            } 
             console.log(bits);
             delete_files.push(__dirname + '/' + _file);
             stego.decode(__dirname + '/' + _file, bits, function(payload){
-                try {
-                    var payload = JSON.parse(payload);
-                    data.orig = payload.orig;
-                    data.encrypted_files = payload.encrypted_files;
-                    return callback();
-                } catch (error) {
-                    return callback(error);
+                var result;
+                if(renamed){
+                    var full_bits = parseInt(payload.split(":")[1]);
+                    stego.decode(__dirname + '/' + _file, full_bits, function(payload){
+                        result = setReadData(payload);
+                        if(!result)
+                            return callback(err);
+                        else
+                            return callback();
+
+                    });
                 }
-                
+                result = setReadData(payload)
+                if(!result)
+                    return callback(err);
+                else
+                    return callback();
             });
+        }
+
+        var setReadData = function(payload){
+            try {
+                var payload = JSON.parse(payload);
+                data.orig = payload.orig;
+                data.encrypted_files = payload.encrypted_files;
+                return true;
+            } catch (error) {
+                return false;
+            }
         }
 
         var decryptParts = function(callback){
