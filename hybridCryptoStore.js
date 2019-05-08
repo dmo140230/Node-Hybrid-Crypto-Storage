@@ -152,17 +152,12 @@ var _hybridCrypto = function(){
                 renamed = true;
                 bits = 20;
             }
-            console.log(bits)
             delete_files.push(__dirname + '/' + _file);
             stego.decode(__dirname + '/' + _file, bits, function(payload){
                 var result;
-                console.log(payload)
                 if(renamed){
-                    console.log("the file was renamed");
-                    var full_bits = parseInt(payload.split(":")[1]);
-                    console.log(full_bits);
-                    stego.decode(__dirname + '/' + _file, full_bits -1, function(payload){
-                        console.log(payload);
+                    var full = parseInt(payload.split(":")[1]);
+                    stego.decode(__dirname + '/' + _file, full -1, function(payload){
                         result = setReadData(payload);
                         if(!result)
                             return callback(err);
